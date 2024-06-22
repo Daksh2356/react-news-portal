@@ -8,10 +8,12 @@ const ArticleSmCard = ({  name, description, url }) => {
       <Link to={`/article/${name}`} 
       state ={{name, description, url}}
       className="lg:hidden w-full bg-blue-300 rounded-sm overflow">
-      <div className="my-5 text-center">
-          <h2 className="truncate">{name}</h2>
-          <p className="text-sm font-light px-2 truncate-multiline">{description}</p>
-         <FaStar className="text-yellow-500 text-2xl" />
+     <div className="my-5 text-center">
+          <div className="flex w-full justify-evenly">
+            <h2 className="truncate w-2/3">{name}</h2>
+            <FaStar className="text-white hover:text-black"/>
+          </div>
+          <p className=" font-light px-2 truncate-multiline">{description}</p>
         </div>
       </Link>
     </>
@@ -25,9 +27,11 @@ const ArticleLgCard = ({ name,description, url}) => {
      state={{ name, description, url }}
         className="hidden lg:block h-48 bg-blue-300 border-black border-2 rounded-md shadow-md overflow">
         <div className="my-5 text-center">
-          <h2 className="truncate">{name}</h2>
-          <p className="text-sm font-light px-2 truncate-multiline">{description}</p>
-          <p className="text-center"><FaStar className="text-white hover:text-black text-center" /></p>
+          <div className="flex w-full justify-evenly">
+            <h2 className="truncate w-2/3">{name}</h2>
+            <FaStar className="text-white hover:text-black"/>
+          </div>
+          <p className=" font-light px-2 truncate-multiline">{description}</p>
         </div>
       </Link>
     </>

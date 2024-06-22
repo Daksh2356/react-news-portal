@@ -27,6 +27,7 @@ const categories = [
 const Home = () => {
   const [category, setCategory] = useState("entertainment");
   const [articles, setArticles] = useState([]);
+  const [originalArticles, setOriginalArticles] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -66,24 +67,11 @@ const Home = () => {
             category,
           },
         });
-        // console.log(category);
-        // console.log(response.data.sources);
         setArticles(response.data.sources);
+        setOriginalArticles(response.data.sources);
       } catch (error) {
         console.error("Error fetching articles", error);
-        if (error.response.status === 429) {
-          toast.error("Too many requests. API Limit reached!! ");
-        }
-        if (error.response.status === 500) {
-          toast.error("Internal Server Error. Please try again later.");
-        }
-        if (error.response.status === 502) {
-          toast.error("Bad Gateway. Please try again later.");
-        }
-        if (error.response.status === 503) {
-          toast.error("Service Unavailable. Please try again later.");
-        }
-        toast.error("Failed to fetch articles. Please try again later.");
+       handleErrors(error);
       } finally {
         setLoading(false);
       }
@@ -93,19 +81,29 @@ const Home = () => {
 
 
   const handleSearch = async (query) => {
-
-    var result = articles.filter((article) => { 
-      console.log(query);
-      console.log(article.name.toLowerCase().includes(query.toLowerCase()));
+    if(query === "") {
+      setArticles(originalArticles);
+    }
+    const filteredArticles = originalArticles.filter((article) => { 
       return article.name.toLowerCase().includes(query.toLowerCase());
     });
+    setArticles(filteredArticles);
+  };  
 
-    if (result.length === 0) {
-      toast.error("No articles found with the given search query.");
-    } else {
-      setArticles(result);
+  const handleErrors = (error) => {
+    if (error.response.status === 429) {
+      toast.error("Too many requests. API Limit reached!! ");
     }
-    
+    if (error.response.status === 500) {
+      toast.error("Internal Server Error. Please try again later.");
+    }
+    if (error.response.status === 502) {
+      toast.error("Bad Gateway. Please try again later.");
+    }
+    if (error.response.status === 503) {
+      toast.error("Service Unavailable. Please try again later.");
+    }
+    toast.error("Failed to fetch articles. Please try again later.");
   };
 
   return (

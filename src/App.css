@@ -37,6 +37,9 @@
   }
 }
 
+body{
+  background-color: cyan;
+}
 
 .swiper-pagination {
   bottom: -10px; /* Adjust the value as needed to move the pagination dots below the content */
