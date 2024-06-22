@@ -12,7 +12,8 @@ const Navbar = () => {
       NEWS PORTAL
     </Link>
       <div className="flex p-6 gap-11">
-        <div className="flex items-center cursor-pointer"> HOME </div>
+        <Link to="/" className="flex items-center cursor-pointer"> HOME </Link>
+        <Link to="/favorites" className="flex items-center cursor-pointer"> FAVORITES </Link>
         <div className="flex items-center cursor-pointer"> SPORTS </div>
         <div className="flex items-center cursor-pointer"> ENTERTAINMENT </div>
         <div className="flex items-center cursor-pointer"> NATIONAL </div>
