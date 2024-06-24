@@ -13,6 +13,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
+import GlobalCategoryCard from "../components/GlobalCategoryCard";
 
 const categories = [
   "Business",
@@ -27,9 +28,11 @@ const categories = [
 const Home = () => {
   const [category, setCategory] = useState("entertainment");
   const [articles, setArticles] = useState([]);
+  const [globalarticles, setGlobalArticles] = useState([]);
   const [originalArticles, setOriginalArticles] = useState([]);
-  const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem("favorites")) || [] );
-
+  const [favorites, setFavorites] = useState(
+    JSON.parse(localStorage.getItem("favorites")) || []
+  );
   const [loading, setLoading] = useState(true);
 
   const slideConfig = {
@@ -42,15 +45,15 @@ const Home = () => {
     },
     breakpoints: {
       640: {
-        slidesPerView: 2,
+        slidesPerView: 1,
         spaceBetween: 20,
       },
       768: {
-        slidesPerView: 3,
+        slidesPerView: 2,
         spaceBetween: 40,
       },
       1024: {
-        slidesPerView: 4,
+        slidesPerView: 3,
         spaceBetween: 50,
       },
     },
@@ -70,9 +73,12 @@ const Home = () => {
         });
         setArticles(response.data.sources);
         setOriginalArticles(response.data.sources);
+
+        const response2 = await axiosInstance.get("/top-headlines/");
+        setGlobalArticles(response2.data.articles);
       } catch (error) {
         console.error("Error fetching articles", error);
-       handleErrors(error);
+        handleErrors(error);
       } finally {
         setLoading(false);
       }
@@ -80,30 +86,28 @@ const Home = () => {
     fetchArticles();
   }, [category]);
 
-
   const handleSearch = async (query) => {
-    if(query === "") {
+    if (query === "") {
       setArticles(originalArticles);
     }
-    const filteredArticles = originalArticles.filter((article) => { 
+    const filteredArticles = originalArticles.filter((article) => {
       return article.name.toLowerCase().includes(query.toLowerCase());
     });
     setArticles(filteredArticles);
-  };  
+  };
 
-  const toggleFavorite = (article) =>{
+  const toggleFavorite = (article) => {
     let updatedFavorites;
-    if(favorites.some((fav) => fav.name === article.name)){
-      updatedFavorites = favorites.filter( fav => fav.name !== article.name);
-    }
-    else{
+    if (favorites.some((fav) => fav.name === article.name)) {
+      updatedFavorites = favorites.filter((fav) => fav.name !== article.name);
+    } else {
       updatedFavorites = [...favorites, article];
     }
 
     setFavorites(updatedFavorites);
 
     localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-  }
+  };
 
   const handleErrors = (error) => {
     if (error.response.status === 429) {
@@ -123,8 +127,38 @@ const Home = () => {
 
   return (
     <>
+      <h1 className="text-3xl font-bold text-center my-5">Global News</h1>
+      <p className="text-center text-lg text-gray-500 mb-3">
+        Get the latest news from around the world. You can also get categorised
+        news and articles below.
+      </p>
+
+      {loading ? (
+        <>
+          <div className="flex justify-center items-center h-12">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="lg:hidden grid grid-cols-3 md:grid-cols-4 gap-3 justify-center px-6">
+            {globalarticles.map((article, index) => (
+              <GlobalCategoryCard key={index} {...article} />
+            ))}
+          </div>
+          <div className="hidden lg:block px-16">
+            <Swiper {...slideConfig}>
+              {globalarticles.map((article, index) => (
+                <SwiperSlide key={index}>
+                  <GlobalCategoryCard {...article} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        </>
+      )}
       <h1 className="text-3xl font-bold text-center my-5">Top Headlines</h1>
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-lg text-gray-500">
         Get the latest news on business, entertainment, health, science, sports
         and technology. Select a category to get started.
       </p>
@@ -148,19 +182,26 @@ const Home = () => {
         </>
       ) : (
         <>
-          <div className="lg:hidden grid grid-cols-3 md:grid-cols-4 gap-3 justify-center px-3">
+          <div className="lg:hidden grid grid-cols-3 md:grid-cols-4 gap-3 justify-center px-6">
             {articles.map((article, index) => (
-              <ArticleCategoryCard key={index} {...article} isFavorite={favorites.some(fav => fav.name === article.name)} 
-              toggleFavorite={()=> toggleFavorite(article)}
+              <ArticleCategoryCard
+                key={index}
+                {...article}
+                isFavorite={favorites.some((fav) => fav.name === article.name)}
+                toggleFavorite={() => toggleFavorite(article)}
               />
             ))}
           </div>
-          <div className="hidden lg:block px-5">
+          <div className="hidden lg:block px-16">
             <Swiper {...slideConfig}>
               {articles.map((article, index) => (
                 <SwiperSlide key={index}>
-                  <ArticleCategoryCard {...article} isFavorite={favorites.some(fav => fav.name === article.name)} 
-                  toggleFavorite ={()=> toggleFavorite(article)}
+                  <ArticleCategoryCard
+                    {...article}
+                    isFavorite={favorites.some(
+                      (fav) => fav.name === article.name
+                    )}
+                    toggleFavorite={() => toggleFavorite(article)}
                   />
                 </SwiperSlide>
               ))}

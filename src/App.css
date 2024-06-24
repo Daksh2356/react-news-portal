@@ -38,7 +38,7 @@
 }
 
 body{
-  background-color: cyan;
+  background-color: #faf9f6;
 }
 
 .swiper-pagination {
@@ -46,4 +46,8 @@ body{
   left: 0;
   width: 100%;
   text-align: center;
+}
+
+::-webkit-scrollbar{
+  display: none;
 }

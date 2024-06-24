@@ -8,7 +8,7 @@ const ArticleSmCard = ({  name, description, url, isFavorite, toggleFavorite }) 
       <Link
         to={`/article/${name}`}
         state={{ name, description, url }}
-        className="lg:hidden w-full bg-blue-300 rounded-sm overflow"
+        className="lg:hidden w-full bg-sky-100 rounded-sm overflow-hidden"
       >
         <div className="my-5 text-center">
           <div className="flex w-full justify-evenly">
@@ -35,7 +35,7 @@ const ArticleLgCard = ({ name,description, url, isFavorite, toggleFavorite}) => 
     <>
      <Link to={`/article/${name}`}
      state={{ name, description, url }}
-        className="hidden lg:block h-52 bg-blue-300 border-black border-2 rounded-md shadow-md overflow">
+        className="hidden lg:block h-52 bg-sky-100 border-black border-2 rounded-md shadow-md overflow-hidden">
         <div className="my-5 text-center">
           <div className="flex w-full justify-evenly">
             <h2 className="truncate w-2/3">{name}</h2>
