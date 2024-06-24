@@ -5,14 +5,14 @@ import { Navigation, Pagination } from "swiper/modules";
 import { toast } from "react-toastify";
 import axiosInstance from "../config/axiosCnfig";
 import ArticleCategoryCard from "../components/ArticleCategoryCard";
+import SearchBar from "../components/SearchBar";
+import "../index.css";
 
 // importing swiper package css
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import "swiper/css/scrollbar";
-import "../index.css";
-import SearchBar from "../components/SearchBar";
 
 const categories = [
   "Business",
@@ -28,6 +28,7 @@ const Home = () => {
   const [category, setCategory] = useState("entertainment");
   const [articles, setArticles] = useState([]);
   const [originalArticles, setOriginalArticles] = useState([]);
+  const [favorites, setFavorites] = useState(JSON.parse(localStorage.getItem("favorites")) || [] );
 
   const [loading, setLoading] = useState(true);
 
@@ -90,6 +91,20 @@ const Home = () => {
     setArticles(filteredArticles);
   };  
 
+  const toggleFavorite = (article) =>{
+    let updatedFavorites;
+    if(favorites.some((fav) => fav.name === article.name)){
+      updatedFavorites = favorites.filter( fav => fav.name !== article.name);
+    }
+    else{
+      updatedFavorites = [...favorites, article];
+    }
+
+    setFavorites(updatedFavorites);
+
+    localStorage.setItem("favorites", JSON.stringify(updatedFavorites));
+  }
+
   const handleErrors = (error) => {
     if (error.response.status === 429) {
       toast.error("Too many requests. API Limit reached!! ");
@@ -135,14 +150,18 @@ const Home = () => {
         <>
           <div className="lg:hidden grid grid-cols-3 md:grid-cols-4 gap-3 justify-center px-3">
             {articles.map((article, index) => (
-              <ArticleCategoryCard key={index} {...article} />
+              <ArticleCategoryCard key={index} {...article} isFavorite={favorites.some(fav => fav.name === article.name)} 
+              toggleFavorite={()=> toggleFavorite(article)}
+              />
             ))}
           </div>
           <div className="hidden lg:block px-5">
             <Swiper {...slideConfig}>
               {articles.map((article, index) => (
                 <SwiperSlide key={index}>
-                  <ArticleCategoryCard {...article} />
+                  <ArticleCategoryCard {...article} isFavorite={favorites.some(fav => fav.name === article.name)} 
+                  toggleFavorite ={()=> toggleFavorite(article)}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>
